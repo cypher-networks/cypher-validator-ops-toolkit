@@ -1,0 +1,19 @@
+﻿[Unit]
+Description=Cypher AI Ops Discord Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=YOUR_USER
+Group=YOUR_USER
+WorkingDirectory=/opt/cypher-ai-ops
+EnvironmentFile=/opt/cypher-ai-ops/.env
+ExecStart=/opt/cypher-ai-ops/.venv/bin/python /opt/cypher-ai-ops/bot.py
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
