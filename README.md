@@ -118,3 +118,4 @@ This is an early operational toolkit. It is intended to be practical, auditable,
 ## License
 
 MIT. See [LICENSE](LICENSE).
+<img width="361" height="166" alt="Screenshot 2026-05-31 213954" src="https://github.com/user-attachments/assets/97788b5c-649b-496c-8cef-2817392396c5" />
