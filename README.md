@@ -30,10 +30,11 @@ docs/
 ```
 
 ## Screenshots (still under developement)
+<img width="850" height="607" alt="Screenshot 2026-05-31 214214" src="https://github.com/user-attachments/assets/b13c252b-bb14-430f-8e12-bc66c44b1a74" />
 <img width="361" height="166" alt="Screenshot 2026-05-31 213954" src="https://github.com/user-attachments/assets/97788b5c-649b-496c-8cef-2817392396c5" />
 <img width="590" height="381" alt="Screenshot 2026-05-31 214009" src="https://github.com/user-attachments/assets/ba0666ce-4483-4250-bf8d-01aa45bd4c5f" />
 <img width="1301" height="879" alt="Screenshot 2026-05-31 214059" src="https://github.com/user-attachments/assets/7b12f19f-c13a-4dea-9e48-97e750e77038" />
-<img width="850" height="607" alt="Screenshot 2026-05-31 214214" src="https://github.com/user-attachments/assets/b13c252b-bb14-430f-8e12-bc66c44b1a74" />
+
 
 
 ## Goals
@@ -121,6 +122,8 @@ Install details are in [cypher-ai-ops/README.md](cypher-ai-ops/README.md).
 ## Status
 
 This is an early operational toolkit. It is intended to be practical, auditable, and easy to adapt. Operators should review scripts before use and test against their own node layout.
+
+"Live Deployment: Currently running in production at Cypher Networks — cosmosvaloper17vst6zuv6zh5ulvzl6j0kl2ldfsjkfqt635gr8"
 
 ## License
 
