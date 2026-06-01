@@ -1,4 +1,4 @@
-﻿# Cypher AI Ops
+# Cypher AI Ops
 
 Cypher AI Ops is a local Discord operations assistant for Cypher Networks validator infrastructure. It runs on an Ubuntu server, talks to a local Ollama model, watches monitor alerts in Discord, reads whitelisted local monitor state/log files, and performs only pre-approved read-only health checks.
 
@@ -45,13 +45,8 @@ This is designed for local LAN/server operations, not public SaaS.
 Known monitor names:
 
 ```text
-aztec
-babylon
-cardano
-cx
-espresso
-ethereum
-starknet
+cosmos-mainnet
+cosmos-testnet
 ```
 
 ## Compact morning summary
@@ -88,7 +83,7 @@ Preferred Discord slash commands:
 The `monitor` field autocompletes known monitor names. Ops notes are persisted locally under `OPS_NOTES_PATH` and are included in future alert/status context. Use notes for maintenance state, for example:
 
 ```text
-/ops remember monitor:ethereum note:lighthouse intentionally down while reth syncs expires:24h
+/ops remember monitor:cosmos-testnet note:node intentionally paused for upgrade testing expires:24h
 ```
 
 This posts a summary of daily reports captured since the bot started today. The bot does not back-read old messages after restart.
@@ -100,7 +95,7 @@ When `AUTO_RESPOND_TO_ALERTS=true`, the bot watches the allowed Discord channel 
 When an alert is detected, the bot:
 
 1. Extracts the Discord message and embed fields.
-2. Infers the monitor type, for example `aztec`, `espresso`, or `ethereum`.
+2. Infers the monitor type, for example `cosmos-mainnet` or `cosmos-testnet`.
 3. Reads only the matching whitelisted local state/log files if present.
 4. Searches the local AI lookup library for matching runbook/config snippets.
 5. Sends alert, live state, and matching docs/config context to Ollama.
@@ -118,8 +113,8 @@ Use this for a direct monitor status summary:
 
 ```text
 !ops status
-!ops status ethereum
-!ops status cardano
+!ops status cosmos-mainnet
+!ops status cosmos-testnet
 ```
 
 ## Local monitor context
@@ -127,14 +122,8 @@ Use this for a direct monitor status summary:
 The bot knows these monitor artifacts from the server scripts:
 
 ```text
-aztec     /home/YOUR_USER/aztec_validator_status.txt      /home/YOUR_USER/aztec_monitor.log
-babylon   /home/YOUR_USER/babylon_validator_status.txt    /home/YOUR_USER/babylon_monitor.log
-cardano   /home/YOUR_USER/cardano_validator_status.txt    /home/YOUR_USER/cardano_monitor.log
-canopy    /home/YOUR_USER/canopy_validator_status.txt     /home/YOUR_USER/canopy_monitor.log
-cx        /home/YOUR_USER/cx_validator_status.txt         /home/YOUR_USER/cx_monitor.log
-espresso  /home/YOUR_USER/espresso_validator_status.txt   /home/YOUR_USER/espresso_monitor.log
-ethereum  /home/YOUR_USER/eth_node_status.txt             /home/YOUR_USER/eth_monitor.log
-starknet  /home/YOUR_USER/starknet_validator_status.txt   no local log file configured
+cosmos-mainnet  /home/YOUR_USER/cosmos_mainnet_status.txt  /home/YOUR_USER/cosmos_mainnet_monitor.log
+cosmos-testnet  /home/YOUR_USER/cosmos_testnet_status.txt  /home/YOUR_USER/cosmos_testnet_monitor.log
 ```
 
 When the bot runs on the monitoring workstation instead of the validator host, it checks the expected local path first, then falls back to the newest matching file under:
@@ -152,10 +141,10 @@ REMOTE_STATE_DIR=/opt/cypher-ai-ops/remote-state
 Recommended layout:
 
 ```text
-/opt/cypher-ai-ops/remote-state/ethnode/eth_node_status.txt
-/opt/cypher-ai-ops/remote-state/ethnode/eth_monitor.log
-/opt/cypher-ai-ops/remote-state/towerofterror/babylon_monitor.log
-/opt/cypher-ai-ops/remote-state/towerofterror/cardano_monitor.log
+/opt/cypher-ai-ops/remote-state/validator-01/cosmos_mainnet_status.txt
+/opt/cypher-ai-ops/remote-state/validator-01/cosmos_mainnet_monitor.log
+/opt/cypher-ai-ops/remote-state/validator-01/cosmos_testnet_status.txt
+/opt/cypher-ai-ops/remote-state/validator-01/cosmos_testnet_monitor.log
 ```
 
 The fallback is read-only. It does not SSH into validator hosts or run recovery commands.
@@ -164,8 +153,8 @@ Use:
 
 ```text
 !ops monitors
-!ops monitor espresso
-!ops monitor ethereum
+!ops monitor cosmos-mainnet
+!ops monitor cosmos-testnet
 ```
 
 To push state from a validator host to the bot host:
@@ -174,7 +163,7 @@ To push state from a validator host to the bot host:
 BOT_HOST=validator@your-validator-host BOT_DIR=/opt/cypher-ai-ops /home/YOUR_USER/push-monitor-state.sh
 ```
 
-If a monitor writes under `/root`, such as Canopy on `Cypher-Server-01`, run the push script as root or with sudo. The script scans `/home/YOUR_USER` and `/root` by default when readable:
+If a monitor writes under `/root`, run the push script as root or with sudo. The script scans `/home/YOUR_USER` and `/root` by default when readable:
 
 ```bash
 sudo env BOT_HOST=validator@your-validator-host BOT_DIR=/opt/cypher-ai-ops /home/YOUR_USER/push-monitor-state.sh
@@ -195,12 +184,11 @@ Copy only monitor logs/status files. Do not copy `.env`, keys, wallet files, or 
 Current probes include:
 
 ```text
-Reth: eth_syncing, eth_blockNumber, net_peerCount on 127.0.0.1:8545
-Lighthouse: health, syncing, peer_count on 127.0.0.1:5052
-Aztec: node_getBlockNumber, node_getProvenBlockNumber on 127.0.0.1:8080
-Espresso: status API block-height, time-since-last-decide, success-rate on 127.0.0.1
-Starknet Pathfinder: starknet_syncing, starknet_blockNumber on 127.0.0.1:9545
+Cosmos mainnet: /status and /net_info on COSMOS_MAINNET_RPC, default http://127.0.0.1:26657
+Cosmos testnet: /status and /net_info on COSMOS_TESTNET_RPC, default http://127.0.0.1:26657
 ```
+
+If mainnet and testnet run on the same host, configure testnet CometBFT RPC on a different local port and set `COSMOS_TESTNET_RPC` in the bot `.env`, for example `http://127.0.0.1:26667`.
 
 ## URL lookup
 
@@ -217,7 +205,7 @@ URL_LOOKUP_MAX_BYTES=120000
 Optional domain allowlist:
 
 ```bash
-URL_LOOKUP_ALLOWED_DOMAINS=docs.espressosys.com,docs.babylonlabs.io,docs.aztec.network
+URL_LOOKUP_ALLOWED_DOMAINS=hub.cosmos.network,docs.cosmos.network,docs.cometbft.com,github.com
 ```
 
 Use:
@@ -245,15 +233,15 @@ PROBLEM_SEARCH_FETCH_PAGES=true
 Restrict searchable domains:
 
 ```bash
-PROBLEM_SEARCH_ALLOWED_DOMAINS=github.com,docs.github.com,gitbook.io,docs.espressosys.com,docs.babylonlabs.io,docs.aztec.network,docs.starknet.io,docs.cardano.org,ethereum.org,lighthouse-book.sigmaprime.io,reth.rs
+PROBLEM_SEARCH_ALLOWED_DOMAINS=github.com,docs.github.com,hub.cosmos.network,docs.cosmos.network,docs.cometbft.com
 ```
 
 Use:
 
 ```text
-!ops search pathfinder attestation missed epoch
-!ops search reth eth_getLogs archive history query fails
-!ops search espresso failed fetching leaf chain from every peer
+!ops search cosmos validator missed blocks
+!ops search cometbft peer count low
+!ops search gaiad governance proposal vote query
 ```
 
 When enabled, passive alert triage and incident-shaped `!ops ask` questions can also include problem-search context. External pages are treated as untrusted reference material.
@@ -285,9 +273,9 @@ KNOWLEDGE_MAX_CHARS=7000
 Use:
 
 ```text
-!ops library espresso finality
-!ops docs babylon rpc
-!ops ask what does the espresso runbook say about stuck height?
+!ops library missed blocks
+!ops docs governance vote
+!ops ask what does the Cosmos runbook say about catching_up?
 ```
 
 The bot does not dump the whole library into Ollama. It keyword-ranks small snippets and sends only the top matches with the operator question.
@@ -322,7 +310,7 @@ The `data/` directory is git-ignored. Do not paste secrets into Discord; redacti
    - `Read Message History`
    - `Send Messages`
    - `Embed Links` optional, useful later
-9. Open the generated invite URL and add the bot to the Cypher Networks Discord server.
+9. Open the generated invite URL and add the bot to your Discord server.
 10. Copy each alert channel ID and put them in `DISCORD_ALLOWED_CHANNEL_IDS`.
 
 To copy a channel ID, enable Discord Developer Mode, right-click the channel, and choose **Copy Channel ID**.
@@ -342,19 +330,39 @@ DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678,234567890123456789,34567890123456
 Optional channel-to-monitor mapping:
 
 ```bash
-DISCORD_CHANNEL_MAP=123456789012345678:espresso,234567890123456789:aztec,345678901234567890:ethereum
+DISCORD_CHANNEL_MAP=123456789012345678:cosmos-mainnet,234567890123456789:cosmos-testnet
 ```
 
 When a mapped channel receives an alert, the bot uses the mapped monitor context instead of guessing from alert text.
+
+## AI model choice
+
+This first release uses a local Ollama model only.
+
+That keeps validator alert text, monitor logs, runbook snippets, and Discord context on your own machine. Cloud AI provider support can be added later behind an explicit provider setting, but it changes the security model because operational data would leave the server.
+
+All bot configuration lives in `cypher-ai-ops/.env`. The `.env` file is local-only and must not be committed.
 
 ## Ollama requirement
 
 Ollama should be running locally with the selected model installed:
 
 ```bash
+curl -fsSL https://ollama.com/install.sh | sh
+sudo systemctl enable --now ollama
 ollama list
 ollama pull qwen2.5-coder:7b
 ```
+
+If you expect GPU inference, verify the GPU is visible:
+
+```bash
+nvidia-smi
+ollama run qwen2.5-coder:7b "Say ready."
+ollama ps
+```
+
+`ollama ps` should show the model loaded. If you set `OLLAMA_REQUIRE_GPU=true`, the bot refuses to answer when Ollama loads the model without GPU VRAM.
 
 Test Ollama directly:
 
@@ -377,15 +385,29 @@ nano .env
 python bot.py
 ```
 
+Minimum `.env` fields to start:
+
+```bash
+DISCORD_BOT_TOKEN=your_discord_bot_token
+DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5-coder:7b
+```
+
+Add `DISCORD_CHANNEL_MAP` when you want monitor-aware responses per alert channel.
+
 Example `.env`:
 
 ```bash
 DISCORD_BOT_TOKEN=your_discord_bot_token
 DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678,234567890123456789
-DISCORD_CHANNEL_MAP=123456789012345678:espresso,234567890123456789:aztec
+DISCORD_CHANNEL_MAP=123456789012345678:cosmos-mainnet,234567890123456789:cosmos-testnet
 DISCORD_GUILD_ID=
 OLLAMA_URL=http://localhost:11434
 OLLAMA_MODEL=qwen2.5-coder:7b
+OLLAMA_REQUIRE_GPU=false
+COSMOS_MAINNET_RPC=http://127.0.0.1:26657
+COSMOS_TESTNET_RPC=http://127.0.0.1:26657
 AUTO_RESPOND_TO_ALERTS=true
 ALERT_RESPONSE_COOLDOWN_SECONDS=60
 CYPHER_AI_MONITOR_CHANNEL_ID=123456789012345678
@@ -511,5 +533,4 @@ Avoid MCP servers that can execute shell commands, write files, restart services
 - Treat LLM output as operator guidance, not automatic remediation.
 - Keep validator keys and seed material off this workflow.
 - Prefer running this on a monitoring workstation or local server with read-only visibility, not directly on critical validator hosts unless that is intentional.
-
 

@@ -1,4 +1,4 @@
-﻿[Unit]
+[Unit]
 Description=Cypher AI Ops Discord Bot
 After=network-online.target
 Wants=network-online.target

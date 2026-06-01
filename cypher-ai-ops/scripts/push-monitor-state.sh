@@ -35,16 +35,14 @@ for source_dir in "${source_dirs[@]}"; do
     continue
   fi
   candidates=(
-      "$source_dir"/*_monitor.log
-      "$source_dir"/*_validator_status.txt
-      "$source_dir"/eth_node_status.txt
-      "$source_dir"/aztec_validator_status.txt
-      "$source_dir"/babylon_validator_status.txt
-      "$source_dir"/canopy_validator_status.txt
-      "$source_dir"/cardano_validator_status.txt
-      "$source_dir"/cx_validator_status.txt
-      "$source_dir"/espresso_validator_status.txt
-      "$source_dir"/starknet_validator_status.txt
+      "$source_dir"/cosmos_mainnet_monitor.log
+      "$source_dir"/cosmos_mainnet_status.txt
+      "$source_dir"/cosmos_mainnet_gov_monitor.log
+      "$source_dir"/cosmos_mainnet_gov_status.txt
+      "$source_dir"/cosmos_testnet_monitor.log
+      "$source_dir"/cosmos_testnet_status.txt
+      "$source_dir"/cosmos_testnet_gov_monitor.log
+      "$source_dir"/cosmos_testnet_gov_status.txt
     )
   for candidate in "${candidates[@]}"; do
     [[ -f "$candidate" ]] && files+=("$candidate")

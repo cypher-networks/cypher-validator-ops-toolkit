@@ -172,7 +172,7 @@ def load_config() -> AppConfig:
     problem_search_url = os.getenv("PROBLEM_SEARCH_URL", "http://127.0.0.1:8080").strip().rstrip("/")
     problem_search_allowed_domains = _parse_csv_env(
         "PROBLEM_SEARCH_ALLOWED_DOMAINS",
-        "github.com,docs.github.com,gitbook.io,docs.espressosys.com,docs.babylonlabs.io,docs.aztec.network,docs.starknet.io,docs.cardano.org,ethereum.org,lighthouse-book.sigmaprime.io,reth.rs",
+        "github.com,docs.github.com,hub.cosmos.network,docs.cosmos.network,docs.cometbft.com",
     )
     problem_search_max_results = _env_int("PROBLEM_SEARCH_MAX_RESULTS", 3)
     problem_search_fetch_pages = _env_bool("PROBLEM_SEARCH_FETCH_PAGES", True)

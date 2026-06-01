@@ -11,7 +11,9 @@ This runbook is a template for Cosmos Hub validator operations. Replace all `REP
 | Mainnet home | `~/.gaia-mainnet` |
 | Testnet home | `~/.gaia` |
 | Mainnet RPC | `tcp://127.0.0.1:26657` |
-| Testnet RPC | `tcp://127.0.0.1:26667` |
+| Testnet RPC | `tcp://127.0.0.1:26657` |
+
+If mainnet and testnet run on the same host, one node must use alternate ports. In that case, set the testnet RPC values in `~/.validator-monitor.env` to the local ports you configured, for example `26667`.
 
 ## Required Local Values
 
@@ -36,8 +38,11 @@ systemctl status gaiad --no-pager
 ## Sync Status
 
 ```bash
+# Mainnet
 curl -s http://127.0.0.1:26657/status | jq '.result.sync_info'
-curl -s http://127.0.0.1:26667/status | jq '.result.sync_info'
+
+# Testnet: use the RPC port configured in ~/.validator-monitor.env
+curl -s http://127.0.0.1:26657/status | jq '.result.sync_info'
 ```
 
 Key fields:
@@ -49,8 +54,11 @@ Key fields:
 ## Peer Count
 
 ```bash
+# Mainnet
 curl -s http://127.0.0.1:26657/net_info | jq '.result.n_peers'
-curl -s http://127.0.0.1:26667/net_info | jq '.result.n_peers'
+
+# Testnet: use the RPC port configured in ~/.validator-monitor.env
+curl -s http://127.0.0.1:26657/net_info | jq '.result.n_peers'
 ```
 
 ## Validator State
@@ -61,7 +69,7 @@ gaiad-mainnet query staking validator REPLACE_WITH_MAINNET_VALOPER \
   -o json | jq
 
 gaiad query staking validator REPLACE_WITH_TESTNET_VALOPER \
-  --node tcp://127.0.0.1:26667 \
+  --node tcp://127.0.0.1:26657 \
   -o json | jq
 ```
 
@@ -79,7 +87,7 @@ gaiad-mainnet query slashing signing-info \
   -o json | jq
 
 gaiad query slashing signing-info REPLACE_WITH_TESTNET_VALCONS \
-  --node tcp://127.0.0.1:26667 \
+  --node tcp://127.0.0.1:26657 \
   -o json | jq
 ```
 

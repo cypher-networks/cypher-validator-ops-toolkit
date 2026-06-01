@@ -1,6 +1,6 @@
 # Cypher Validator Ops Toolkit
 
-Open validator operations tooling for Cosmos Hub operators and multi-chain validator teams.
+Open validator operations tooling for Cosmos Hub operators.
 
 This repository contains read-only monitor scripts, governance proposal/vote alerting, a local Discord/Ollama operations assistant, and practical runbooks for validator infrastructure.
 
@@ -50,7 +50,14 @@ See [docs/security-model.md](docs/security-model.md).
 
 ## Quick Start
 
-1. Copy the environment template:
+There are two local environment files:
+
+- `~/.validator-monitor.env` for the shell monitor scripts.
+- `cypher-ai-ops/.env` for the optional Discord/Ollama bot.
+
+Both are created from examples and edited locally. Do not commit real `.env` files.
+
+1. Copy the monitor environment template:
 
 ```bash
 cp .env.example ~/.validator-monitor.env
@@ -99,6 +106,8 @@ See [docs/governance-alerts.md](docs/governance-alerts.md).
 ## Cypher AI Ops
 
 The `cypher-ai-ops/` bot is optional. It runs locally, connects to Discord, and uses a local Ollama model to summarize alerts and suggest safe next checks.
+
+The current release uses local Ollama only. Operators configure the bot by copying `cypher-ai-ops/.env.example` to `cypher-ai-ops/.env`, entering the Discord token/channel IDs, and setting the local Ollama URL/model.
 
 Install details are in [cypher-ai-ops/README.md](cypher-ai-ops/README.md).
 

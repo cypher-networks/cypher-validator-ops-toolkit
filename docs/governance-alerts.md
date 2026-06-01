@@ -72,12 +72,14 @@ Testnet:
 ```bash
 COSMOS_TESTNET_CHAIN_ID=provider
 COSMOS_TESTNET_BIN=/home/YOUR_USER/go/bin/gaiad
-COSMOS_TESTNET_NODE=tcp://127.0.0.1:26667
-COSMOS_TESTNET_QUERY_NODE=tcp://127.0.0.1:26667
+COSMOS_TESTNET_NODE=tcp://127.0.0.1:26657
+COSMOS_TESTNET_QUERY_NODE=tcp://127.0.0.1:26657
 COSMOS_TESTNET_GOV_VOTER_ADDRESS=REPLACE_WITH_TESTNET_WALLET_ADDRESS
 COSMOS_TESTNET_GOV_KEY_NAME=YOUR_TESTNET_KEY_NAME
 COSMOS_TESTNET_GOV_DISCORD_WEBHOOK_URL=
 ```
+
+If mainnet and testnet are running on the same host, replace the testnet `*_NODE` values with the alternate local port configured for that node, for example `tcp://127.0.0.1:26667`.
 
 If `*_GOV_DISCORD_WEBHOOK_URL` is empty, the script falls back to the chain-level Discord webhook variables.
 

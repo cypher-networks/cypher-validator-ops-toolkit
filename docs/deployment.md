@@ -83,6 +83,17 @@ Example:
 
 The Discord bot is optional.
 
+This release uses local Ollama only. Install Ollama and pull the model before starting the bot:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+sudo systemctl enable --now ollama
+ollama pull qwen2.5-coder:7b
+ollama ps
+```
+
+All bot settings go in `cypher-ai-ops/.env`.
+
 ```bash
 cd cypher-ai-ops
 python3 -m venv .venv
@@ -91,6 +102,15 @@ pip install -r requirements.txt
 cp .env.example .env
 nano .env
 python bot.py
+```
+
+Minimum bot `.env`:
+
+```bash
+DISCORD_BOT_TOKEN=your_discord_bot_token
+DISCORD_ALLOWED_CHANNEL_IDS=123456789012345678
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5-coder:7b
 ```
 
 For systemd, review and edit `cypher-ai-ops/systemd/cypher-ai-ops.service` for your user and install path before copying it to `/etc/systemd/system/`.
